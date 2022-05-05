@@ -1,5 +1,6 @@
-from lib import *
-from make_datapath import make_datapath_list
+import xml.etree.ElementTree as ET 
+import numpy as np
+np.random.seed(1234)
 
 """
     This file is to generate annotions of images 
@@ -47,6 +48,8 @@ class Anno_xml(object):
         return np.array(annotations)
 
 if __name__ == '__main__':
+    from make_datapath import make_datapath_list
+    import cv2
     class_names = ["aeroplane", "bicycle", "bird",  "boat", "bottle", 
                     "bus", "car", "cat", "chair", "cow", "diningtable",
                     "dog", "horse", "motorbike", "person", "pottedplant",

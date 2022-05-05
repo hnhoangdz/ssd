@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import types
 from numpy import random
+np.random.seed(1234)
 
 def intersect(box_a, box_b):
     """ Compute area of overlap
@@ -113,8 +114,7 @@ class Resize(object):
         self.size = size
 
     def __call__(self, image, boxes=None, labels=None):
-        image = cv2.resize(image, (self.size,
-                                 self.size))
+        image = cv2.resize(image, (self.size,self.size))
         return image, boxes, labels
 
 # Increasing Saturation randomly
@@ -231,7 +231,7 @@ class RandomSampleCrop(object):
             labels (Tensor): the class labels for each bbox
     """
     def __init__(self):
-        self.sample_options = (
+        self.sample_options = np.array([
             # using entire original input image
             None,
             # sample a patch s.t. MIN jaccard w/ obj in .1,.3,.4,.7,.9
@@ -240,7 +240,7 @@ class RandomSampleCrop(object):
             (0.7, None),
             (0.9, None),
             # randomly sample a patch
-            (None, None),
+            (None, None)], dtype=object
         )
 
     def __call__(self, image, boxes=None, labels=None):

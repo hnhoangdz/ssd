@@ -1,11 +1,7 @@
-from agumentation import Compose, ConvertFromInts, ToAbsoluteCoords, \
+from data.agumentation import Compose, ConvertFromInts, ToAbsoluteCoords, \
     PhotometricDistort, Expand, RandomSampleCrop, RandomMirror, \
     ToPercentCoords, Resize, SubtractMeans
-from make_datapath import make_datapath_list
-from extract_xml import Anno_xml
-
-# from lib import *
-
+    
 class DataTransform(object):
     def __init__(self, input_size, color_mean):
         self.data_transform = {
@@ -31,6 +27,8 @@ class DataTransform(object):
         return self.data_transform[phase](image, boxes, labels)
 
 if __name__ == '__main__':
+    from make_datapath import make_datapath_list
+    from extract_xml import Anno_xml
     import cv2
     import matplotlib.pyplot as plt
     classes = ["aeroplane", "bicycle", "bird",  "boat", "bottle", 

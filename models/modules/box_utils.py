@@ -1,8 +1,7 @@
 import torch
 
-
 def point_form(boxes):
-    """ Convert prior_boxes to (xmin, ymin, xmax, ymax)
+    """ Convert coordinates to (xmin, ymin, xmax, ymax)
     representation for comparison to point form ground truth data.
     Args:
         boxes: (tensor) center-size default boxes from priorbox layers.
@@ -14,7 +13,7 @@ def point_form(boxes):
 
 
 def center_size(boxes):
-    """ Convert prior_boxes to (cx, cy, w, h)
+    """ Convert coordinates to (cx, cy, w, h)
     representation for comparison to center-size form ground truth data.
     Args:
         boxes: (tensor) point_form boxes
@@ -36,10 +35,12 @@ def intersect(box_a, box_b):
     Return:
         (tensor) intersection area, Shape: [A,B].
     """
-    A = box_a.size(0)
-    B = box_b.size(0)
+    A = box_a.size(0) # num_objs
+    B = box_b.size(0) # num_priors
+    # xmax, ymax
     max_xy = torch.min(box_a[:, 2:].unsqueeze(1).expand(A, B, 2),
                        box_b[:, 2:].unsqueeze(0).expand(A, B, 2))
+    # xmin, ymin
     min_xy = torch.max(box_a[:, :2].unsqueeze(1).expand(A, B, 2),
                        box_b[:, :2].unsqueeze(0).expand(A, B, 2))
     inter = torch.clamp((max_xy - min_xy), min=0)
@@ -73,7 +74,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
     corresponding to both confidence and location preds.
     Args:
         threshold: (float) The overlap threshold used when mathing boxes.
-        truths: (tensor) Ground truth boxes, Shape: [num_obj, num_priors].
+        truths: (tensor) Ground truth boxes, Shape: [num_obj, 4].
         priors: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4].
         variances: (tensor) Variances corresponding to each prior coord,
             Shape: [num_priors, 4].
@@ -91,9 +92,9 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
     )
     # (Bipartite Matching)
     # [1,num_objects] best prior for each ground truth
-    best_prior_overlap, best_prior_idx = overlaps.max(1, keepdim=True)
+    best_prior_overlap, best_prior_idx = overlaps.max(1, keepdim=True) # theo hang
     # [1,num_priors] best ground truth for each prior
-    best_truth_overlap, best_truth_idx = overlaps.max(0, keepdim=True)
+    best_truth_overlap, best_truth_idx = overlaps.max(0, keepdim=True) # theo cot
     best_truth_idx.squeeze_(0)
     best_truth_overlap.squeeze_(0)
     best_prior_idx.squeeze_(1)

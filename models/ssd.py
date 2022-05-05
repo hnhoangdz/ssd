@@ -1,12 +1,12 @@
-from extras import extras
-from loc_conf import loc_conf
-from vgg import vgg
-from modules.l2norm import L2Norm
-from modules.default_boxes import DefaultBoxes
-from modules.cfg import *
+from models.extras import extras
+from models.loc_conf import loc_conf
+from models.vgg import vgg
+from models.modules.l2norm import L2Norm
+from models.modules.default_boxes import DefaultBoxes
+from models.modules.cfg import *
 import torch
 import torch.nn as nn
-from detection import Detect
+from models.detection import Detect
 
 class SSD(nn.Module):
     def __init__(self, phase, cfg=cfg):
@@ -76,5 +76,5 @@ class SSD(nn.Module):
         
         
 if __name__ == '__main__':
-    ssd = SSD(cfg)
+    ssd = SSD('train', cfg)
     print(ssd)

@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+torch.manual_seed(1234)
+
 """
 torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1,
     padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)

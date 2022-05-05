@@ -23,4 +23,3 @@ random.seed(1234)
 
 import warnings
 warnings.filterwarnings("ignore")
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"

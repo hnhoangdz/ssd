@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+torch.manual_seed(1234)
+
 def loc_conf(num_classes=21,bbox_aspect_num=[4,6,6,6,4,4]):
     loc_layers = []
     conf_layers = []

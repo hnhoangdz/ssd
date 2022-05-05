@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+torch.manual_seed(1234)
+
 def extras():
     layers = []
     in_channels = 1024 # output of vgg 

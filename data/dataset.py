@@ -1,8 +1,8 @@
-from random import shuffle
-from lib import *
-from transform import DataTransform
-from extract_xml import Anno_xml
-from make_datapath import make_datapath_list
+import torch.utils.data as data
+import cv2
+import torch
+import numpy as np
+np.random.seed(1234)
 
 class MyDataset(data.Dataset):
     def __init__(self, img_list_path, anno_list_path, phase, transform, anno_xml):
@@ -16,7 +16,7 @@ class MyDataset(data.Dataset):
         return len(self.img_list_path)
 
     def __getitem__(self, index):
-        img, gt, height, width = self.pull_item(index)
+        img, gt = self.pull_item(index)
         return img, gt
 
     def pull_item(self, index):
@@ -39,7 +39,7 @@ class MyDataset(data.Dataset):
         # ground truth
         gt = np.hstack((boxes, labels))
 
-        return img, gt, height, width
+        return img, gt
 
 def collate_fn(batch):
     imgs = []
@@ -49,7 +49,11 @@ def collate_fn(batch):
         targets.append(torch.FloatTensor(sample[1]))
     imgs = torch.stack(imgs, dim=0)
     return imgs, targets
+
 if __name__ == '__main__':
+    from transform import DataTransform
+    from extract_xml import Anno_xml
+    from make_datapath import make_datapath_list
     class_names = ["aeroplane", "bicycle", "bird",  "boat", "bottle", 
                     "bus", "car", "cat", "chair", "cow", "diningtable",
                     "dog", "horse", "motorbike", "person", "pottedplant",

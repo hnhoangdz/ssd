@@ -77,24 +77,24 @@ import torch.nn as nn
 # print(w)
 # w.resize_as_(a)
 # print(w)
-# print(torch.__version__)
+
 # m = nn.Softmax(dim=0)
 
-# x = torch.randint(1,5,size=(5,), dtype=torch.float32)
+# x = torch.randint(1,5,size=(5,))
 # print(x.dtype)
 # print(m(x))
-# decode_boxes = torch.randn((8732,4))
-# print(decode_boxes)
-# x = torch.rand((4, 21, 8732), dtype=torch.float16)
-# c_mask = x[1][1].gt(0.01)
-# a = c_mask.unsqueeze(1).expand_as(decode_boxes)
-# print(a)
-# print(c_mask.shape, a.shape)
 
-x = torch.Tensor(([[1]]))
-y = torch.Tensor(([[1]]))
-z = torch.cat((x,y),dim=0)
-t = torch.cat((x,y),dim=1)
-print(x.shape)
-print(z)
-print(t)
+a = torch.randint(1,10,size=(5,4))
+b = torch.randint(1,10,size=(8,4))
+A = a.size(0) # num_objs
+B = b.size(0) # num_priors
+print(a[:, 2:])
+print('-----')
+print(a[:, 2:].unsqueeze(1))
+print('-----')
+print(a[:, 2:].unsqueeze(1).expand(A, B, 2))
+# xmax, ymax
+max_xy = torch.min(a[:, 2:].unsqueeze(1).expand(A, B, 2),
+                    b[:, 2:].unsqueeze(0).expand(A, B, 2))
+
+print(max_xy.size())
