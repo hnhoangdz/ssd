@@ -15,8 +15,9 @@ def decode(loc, dboxes):
         dim=1: concatenate bằng cột (e.g: [1],[1] -> [[1,1]]
     """
     # công thức: ../images/decode.png 
-    boxes = torch.cat(( dboxes[:, :2]*(1 + 0.1*loc[:,:2]),
-                        dboxes[:, 2:]*torch.exp*(0.2*loc[:,2:])), dim=1)
+    boxes = torch.cat((dboxes[:, :2] + 0.1*loc[:, :2]*dboxes[:, 2:],
+                       dboxes[:, 2:]*torch.exp(loc[:, 2:])*0.2), dim=1)
+    
     # biến đổi cx,cy,w,h -> xmin,ymin,xmax,ymax 
     boxes[:, :2] -= boxes[:, 2:]/2
     boxes[:, 2:] += boxes[:, :2]
@@ -127,14 +128,14 @@ def nms(boxes, scores, overlap=0.45, top_k=200):
         
     return keep, count
 
-class Detect(Function):
+class Detect():
     def __init__(self, conf_threshold=0.01, top_k=200, nms_threshold=0.45):
         self.softmax = nn.Softmax(dim=-1)
         self.conf_threshold = conf_threshold
         self.top_k = top_k
         self.nms_threshold = nms_threshold
     
-    def forward(self, loc_data, conf_data, dboxes):
+    def __call__(self, loc_data, conf_data, dboxes):
         """Khi inference
 
         Args:
@@ -144,6 +145,7 @@ class Detect(Function):
         Return:
         
         """
+        print(loc_data.size())
         # Thông tin size
         batch_size = loc_data.size(0)
         num_dboxes = loc_data.size(1) # 8732
@@ -163,6 +165,7 @@ class Detect(Function):
             # decode boxes của image thứ i
             # loc_data[i] là output của image thứ i từ loc model
             decode_boxes = decode(loc_data[i], dboxes) # (8732, 4)
+            
             # clone conf_preds của image thứ i
             conf_scores = conf_preds[i].clone() # (21, 8732)
             
@@ -199,7 +202,7 @@ class Detect(Function):
                 # lấy ra scores và boxes cho class c
                 # vd trong ảnh với class=person thì có só lượng là count
                 # ids là vị trí của họ
-                output[i, c, :count] = torch.cat((scores[ids[:count]].unsqueeze(1),boxes[ids[:count]]),dim=1)
+                output[i, c, :count] = torch.cat((scores[ids[:count]].unsqueeze(1), boxes[ids[:count]]), 1)
         return output
             
             

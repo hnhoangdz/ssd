@@ -47,7 +47,7 @@ val_dataset = MyDataset(val_img_paths, val_anno_paths, phase='val', transform=tr
 train_dataloader = data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
 val_dataloader = data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False, collate_fn=collate_fn)
 dataloader_dict = {'train': train_dataloader, 
-                   'val': val_dataloader}
+                    'val': val_dataloader}
 
 # 2. Create ssd300
 model = SSD(phase='train', cfg=cfg) # load ssd300 model
